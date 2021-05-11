@@ -1,12 +1,20 @@
 const express = require('express');
 const path = require('path');
+const dotenv = require('dotenv');
+const axios = require('axios');
 const app = express();
-
 module.exports = app;
+dotenv.config();
+
+const redirect_uri =
+  process.env.REDIRECT_URI || 'http://localhost:3000/callback';
+
+const SPOTIFY_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const SCOPES = process.env.SCOPES;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
-//routes
 
 app.get('/', (req, res, next) => {
   try {
@@ -17,6 +25,47 @@ app.get('/', (req, res, next) => {
   }
 });
 
+app.get('/login', (req, res, next) => {
+  console.log(encodeURIComponent(redirect_uri));
+  try {
+    res.redirect(
+      'https://accounts.spotify.com/authorize' +
+        '?response_type=code' +
+        '&client_id=' +
+        SPOTIFY_ID +
+        (SCOPES ? '&scope=' + encodeURIComponent(SCOPES) : '') +
+        '&redirect_uri=' +
+        encodeURIComponent(redirect_uri)
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/callback', async (req, res, next) => {
+  try {
+    const code = req.query.code;
+    const grant_type = 'authorization_code';
+
+    const response = await axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      params: {
+        client_id: process.env.SPOTIFY_CLIENT_ID,
+        client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+        code,
+        grant_type,
+        redirect_uri,
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+    res.send(response.data);
+  } catch (error) {
+    next(error);
+  }
+});
 app.use((error, req, res, next) => {
   console.log(error);
   res.status(500).send(error);
