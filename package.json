@@ -1,0 +1,39 @@
+{
+  "name": "stackathon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "build:dev": "npm run build -- --watch --mode=development",
+    "start:dev": "npm run build:dev & nodemon ./server/main.js --ignore public/ --ignore client/",
+    "start": "node ./server/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alejvillanueva/stackathon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alejvillanueva/stackathon/issues"
+  },
+  "homepage": "https://github.com/alejvillanueva/stackathon#readme",
+  "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "express": "^4.17.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@babel/preset-react": "^7.13.13",
+    "axios": "^0.21.1",
+    "babel-loader": "^8.2.2",
+    "dotenv": "^9.0.2",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0"
+  }
+}
