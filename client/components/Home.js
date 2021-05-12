@@ -1,10 +1,10 @@
 import React from 'react';
 import Welcome from './Welcome';
 
-function Home() {
+function Home({ location }) {
   return (
     <div id="login">
-      <Welcome />
+      <Welcome location={location} />
     </div>
   );
 }

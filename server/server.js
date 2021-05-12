@@ -3,6 +3,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 const axios = require('axios');
 const app = express();
+const qs = require('qs');
+
 module.exports = app;
 dotenv.config();
 
@@ -10,7 +12,6 @@ const redirect_uri =
   process.env.REDIRECT_URI || 'http://localhost:3000/callback';
 
 const SPOTIFY_ID = process.env.SPOTIFY_CLIENT_ID;
-const SPOTIFY_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const SCOPES = process.env.SCOPES;
 
 app.use(express.json());
@@ -61,7 +62,14 @@ app.get('/callback', async (req, res, next) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-    res.send(response.data);
+
+    const { access_token, refresh_token } = response.data;
+    res.redirect(
+      `http://localhost:3000/#/${qs.stringify({
+        access_token,
+        refresh_token,
+      })}`
+    );
   } catch (error) {
     next(error);
   }

@@ -27,6 +27,7 @@ const theme = createMuiTheme({
     },
   },
 });
+
 render(
   <ThemeProvider theme={theme}>
     <Main />
