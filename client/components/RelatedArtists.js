@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getTopArtists } from '../store/artists';
 import {
   Typography,
   Grid,
@@ -13,15 +12,18 @@ import {
 } from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
-const TOP_ARTIST_API = 'https://api.spotify.com/v1/me/top/artists?limit=10';
+const ARTIST_API = 'https://api.spotify.com/v1/artists/';
+const RELATED_ARTISTS = '/related-artists';
+const TOP_SONGS = '/top-tracks?market=US';
 
+import qs from 'qs';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   paper: {
-    height: 300,
-    width: 300,
+    height: 275,
+    width: 275,
   },
   control: {
     padding: theme.spacing(5),
@@ -32,22 +34,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Home() {
-  const [topArtists, setTopArtists] = useState([]);
+function RelatedArtists({ location }) {
+  const [relatedArtists, setRelatedArtists] = useState([]);
+  const [topSongs, setTopSongs] = useState([]);
+  const [artist, setArtist] = useState({ name: '', id: '' });
+
   useEffect(() => {
-    const getTopArtists = async () => {
-      const artists = await axios.get(TOP_ARTIST_API, {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem(
-            'spotify_token'
-          )}`,
-        },
+    const [name, id] = location.pathname.split('/').splice(2);
+    setArtist({ name, id });
+    const getRelatedArtists = async () => {
+      const { artists } = (
+        await axios.get(ARTIST_API + id + RELATED_ARTISTS, {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem(
+              'spotify_token'
+            )}`,
+          },
+        })
+      ).data;
+      setRelatedArtists(artists);
+
+      artists.forEach(async (artist) => {
+        const { tracks } = (
+          await axios.get(ARTIST_API + id + TOP_SONGS, {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem(
+                'spotify_token'
+              )}`,
+            },
+          })
+        ).data;
       });
-      const { items } = artists.data;
-      setTopArtists(items);
+      //add random songs to top songs
+
+      //const { items } = artists.data;
     };
 
-    getTopArtists();
+    getRelatedArtists();
   }, []);
   const [spacing, setSpacing] = React.useState(4);
   const classes = useStyles();
@@ -55,7 +78,6 @@ function Home() {
   const handleChange = (event) => {
     setSpacing(Number(event.target.value));
   };
-
   return (
     <div>
       <Typography
@@ -64,18 +86,15 @@ function Home() {
         variant="h2"
         color="primary"
       >
-        Your Top Artists
+        Related Artists to: {artist.name}
       </Typography>
       <Grid container className={classes.root} spacing={2}>
         <Grid item xs={12}>
           <Grid container justify="center" spacing={spacing}>
-            {topArtists.map((artist, idx) => (
+            {relatedArtists.map((artist, idx) => (
               <Grid key={idx} item>
                 <Card className={classes.paper}>
-                  <CardActionArea
-                    component={Link}
-                    to={`/artist/${artist.name}/${artist.id}`}
-                  >
+                  <CardActionArea component={Link} to={`/artsit/${artist.id}`}>
                     <CardMedia
                       className={classes.media}
                       image={artist.images[0].url}
@@ -93,16 +112,6 @@ function Home() {
                       </Typography>
                     </CardContent>
                   </CardActionArea>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      target="_blank"
-                      href={artist.external_urls.spotify}
-                    >
-                      Check Out on Spotify
-                    </Button>
-                  </CardActions>
                 </Card>
               </Grid>
             ))}
@@ -113,4 +122,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default RelatedArtists;
