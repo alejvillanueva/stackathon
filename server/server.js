@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const axios = require('axios');
 const app = express();
 const qs = require('qs');
-
+const router = require('./spotify');
 module.exports = app;
 dotenv.config();
 
@@ -16,6 +16,7 @@ const SCOPES = process.env.SCOPES;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/spotify', router);
 
 app.get('/', (req, res, next) => {
   try {
@@ -27,7 +28,6 @@ app.get('/', (req, res, next) => {
 });
 
 app.get('/login', (req, res, next) => {
-  console.log(encodeURIComponent(redirect_uri));
   try {
     res.redirect(
       'https://accounts.spotify.com/authorize' +
@@ -65,7 +65,7 @@ app.get('/callback', async (req, res, next) => {
 
     const { access_token, refresh_token } = response.data;
     res.redirect(
-      `http://localhost:3000/#/${qs.stringify({
+      `http://localhost:3000/#/auth/${qs.stringify({
         access_token,
         refresh_token,
       })}`
