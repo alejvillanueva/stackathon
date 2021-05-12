@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import qs from 'qs';
 import {
   Button,
   Typography,
@@ -35,40 +34,25 @@ const useStyles = makeStyles({
 });
 
 function Welcome({ location }) {
-  console.log(location);
   const classes = useStyles();
-  const [loggedIn, setLoggedIn] = useState(false);
-  useEffect(() => {
-    const loginThroughSpotify = () => {
-      const token = qs.parse(location.pathname);
-      if (token['/access_token']) {
-        window.localStorage.setItem('spotify_token', token['/access_token']);
-      }
-    };
 
-    loginThroughSpotify();
-    if (window.localStorage.getItem('spotify_token') !== 'undefined') {
-      setLoggedIn(true);
-    }
-  }, [location.pathname]);
-  if (loggedIn) {
-    return <Redirect to="/home" />;
-  }
   return (
-    <Grid className={classes.root} alignItems="center" justify="center">
-      <Card className={classes.card} variant="outlined">
-        <CardContent>
-          <Typography variant="h2" color="secondary" fontS>
-            Explorify
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button variant="contained" color="primary">
-            <a href="/login">Log In With Spotify</a>
-          </Button>
-        </CardActions>
-      </Card>
-    </Grid>
+    <div id="log-in">
+      <Grid className={classes.root} alignItems="center" justify="center">
+        <Card className={classes.card} variant="outlined">
+          <CardContent>
+            <Typography variant="h2" color="secondary">
+              Explorify
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button variant="contained" color="primary">
+              <a href="/login">Log In With Spotify</a>
+            </Button>
+          </CardActions>
+        </Card>
+      </Grid>
+    </div>
   );
 }
 
