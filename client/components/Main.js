@@ -2,7 +2,6 @@ import React from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import Welcome from './Welcome';
 import Home from './Home';
-import Playlists from './Playlists';
 import Auth from './Auth';
 function Main() {
   return (
@@ -10,8 +9,7 @@ function Main() {
       <div id="container">
         <Route exact component={Welcome} path="/" />
         <Route exact component={Auth} path="/auth/:token" />
-        <Route component={Home} path="/home" />
-        <Route component={Playlists} path="/playlists" />
+        <Route exact component={Home} path="/home" />
       </div>
     </Router>
   );
