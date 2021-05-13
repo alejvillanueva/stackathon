@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getTopArtists } from '../store/artists';
 import {
   Typography,
   Grid,
@@ -19,9 +18,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  paper: {
+  card: {
     height: 300,
     width: 300,
+    boxShadow: '20px 15px 20px -10px rgba(91,198,78, 0.6)',
   },
   control: {
     padding: theme.spacing(5),
@@ -71,7 +71,7 @@ function Home() {
           <Grid container justify="center" spacing={spacing}>
             {topArtists.map((artist, idx) => (
               <Grid key={idx} item>
-                <Card className={classes.paper}>
+                <Card className={classes.card}>
                   <CardActionArea
                     component={Link}
                     to={`/artist/${artist.name}/${artist.id}`}

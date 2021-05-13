@@ -9,9 +9,12 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Modal,
 } from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import NewPlaylist from './NewPlaylist';
+
 const ARTIST_API = 'https://api.spotify.com/v1/artists/';
 const RELATED_ARTISTS = '/related-artists';
 const TOP_SONGS = '/top-tracks?market=US';
@@ -21,9 +24,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  paper: {
-    height: 275,
-    width: 275,
+  card: {
+    width: 300,
+    boxShadow: '20px 15px 20px -10px rgba(199,37,32, 0.8)',
   },
   control: {
     padding: theme.spacing(5),
@@ -38,7 +41,15 @@ function RelatedArtists({ location }) {
   const [relatedArtists, setRelatedArtists] = useState([]);
   const [topSongs, setTopSongs] = useState([]);
   const [artist, setArtist] = useState({ name: '', id: '' });
+  const [open, setOpen] = useState(false);
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   useEffect(() => {
     const [name, id] = location.pathname.split('/').splice(2);
     setArtist({ name, id });
@@ -54,9 +65,10 @@ function RelatedArtists({ location }) {
       ).data;
       setRelatedArtists(artists);
 
+      const newTopSongs = [];
       artists.forEach(async (artist) => {
         const { tracks } = (
-          await axios.get(ARTIST_API + id + TOP_SONGS, {
+          await axios.get(ARTIST_API + artist.id + TOP_SONGS, {
             headers: {
               Authorization: `Bearer ${window.localStorage.getItem(
                 'spotify_token'
@@ -64,9 +76,9 @@ function RelatedArtists({ location }) {
             },
           })
         ).data;
+        newTopSongs.push(tracks[0]);
       });
-      //add random songs to top songs
-
+      setTopSongs(newTopSongs);
       //const { items } = artists.data;
     };
 
@@ -78,6 +90,7 @@ function RelatedArtists({ location }) {
   const handleChange = (event) => {
     setSpacing(Number(event.target.value));
   };
+
   return (
     <div>
       <Typography
@@ -93,31 +106,56 @@ function RelatedArtists({ location }) {
           <Grid container justify="center" spacing={spacing}>
             {relatedArtists.map((artist, idx) => (
               <Grid key={idx} item>
-                <Card className={classes.paper}>
-                  <CardActionArea component={Link} to={`/artsit/${artist.id}`}>
-                    <CardMedia
-                      className={classes.media}
-                      image={artist.images[0].url}
-                    />
-                    <CardContent>
-                      <Typography variant="h5" color="secondary" component="h3">
-                        {artist.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        component="p"
-                      >
-                        Genres: {artist.genres[0]}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.media}
+                    image={artist.images[0].url}
+                  />
+                  <CardContent>
+                    <Typography variant="h5" color="secondary" component="h3">
+                      {artist.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      Genres: {artist.genres[0]}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      target="_blank"
+                      href={artist.external_urls.spotify}
+                    >
+                      Check Out on Spotify
+                    </Button>
+                  </CardActions>
                 </Card>
               </Grid>
             ))}
           </Grid>
         </Grid>
       </Grid>
+
+      <div>
+        <button type="button" onClick={handleOpen}>
+          Open Modal
+        </button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <NewPlaylist songs={topSongs} artistName={artist.name} />
+        </Modal>
+      </div>
     </div>
   );
 }

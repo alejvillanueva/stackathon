@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
-router.get('/', async (req, res, next) => {
+router.post('/create-playlist', async (req, res, next) => {
   try {
-    console.log('hello');
+    //axios call to spotify
   } catch (error) {}
 });
 module.exports = router;
