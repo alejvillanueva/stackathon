@@ -68,9 +68,10 @@ function NewPlaylist({ songs, artistName }) {
   const handleSubmit = async (ev) => {
     ev.preventDefault();
     const playlistToCreate = {
-      playlistName,
-      publicList,
+      name: playlistName,
+      public: publicList,
       topSongs,
+      token: window.localStorage.getItem('spotify_token'),
     };
     await axios.post('/spotify/create-playlist', playlistToCreate);
   };
@@ -112,6 +113,7 @@ function NewPlaylist({ songs, artistName }) {
         <Button type="submit" className={classes.button} variant="outlined">
           create
         </Button>
+        <br />
         <Typography variant="overline">Private?</Typography>
         <Checkbox
           name="playlistPublic"

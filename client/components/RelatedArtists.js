@@ -35,6 +35,20 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 160,
   },
+  button: {
+    padding: '10px',
+    backgroundColor: 'rgb(91, 198, 78)',
+    color: 'white',
+    '&:hover': {
+      color: 'rgb(91, 198, 78)',
+      backgroundColor: 'rgb(255, 255, 255)',
+    },
+  },
+
+  buttonDiv: {
+    color: 'white',
+    textAlign: 'center',
+  },
 }));
 
 function RelatedArtists({ location }) {
@@ -99,9 +113,9 @@ function RelatedArtists({ location }) {
         variant="h2"
         color="primary"
       >
-        Related Artists to: {artist.name}
+        Related Artists to {artist.name}
       </Typography>
-      <Grid container className={classes.root} spacing={2}>
+      <Grid container className={classes.root}>
         <Grid item xs={12}>
           <Grid container justify="center" spacing={spacing}>
             {relatedArtists.map((artist, idx) => (
@@ -139,11 +153,19 @@ function RelatedArtists({ location }) {
           </Grid>
         </Grid>
       </Grid>
-
+      <br />
+      <div className={classes.buttonDiv}>
+        <Typography variant="button">Explore their </Typography>
+        <Button
+          align="center"
+          className={classes.button}
+          type="button"
+          onClick={handleOpen}
+        >
+          Top Songs
+        </Button>
+      </div>
       <div>
-        <button type="button" onClick={handleOpen}>
-          Open Modal
-        </button>
         <Modal
           open={open}
           onClose={handleClose}

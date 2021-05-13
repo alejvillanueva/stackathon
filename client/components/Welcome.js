@@ -46,9 +46,11 @@ function Welcome({ location }) {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button variant="contained" color="primary">
-              <a href="/login">Log In With Spotify</a>
-            </Button>
+            <a href="/login">
+              <Button variant="contained" color="primary">
+                Log In With Spotify
+              </Button>
+            </a>
           </CardActions>
         </Card>
       </Grid>
