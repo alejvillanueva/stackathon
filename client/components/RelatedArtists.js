@@ -14,6 +14,7 @@ import {
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import NewPlaylist from './NewPlaylist';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 
 const ARTIST_API = 'https://api.spotify.com/v1/artists/';
 const RELATED_ARTISTS = '/related-artists';
@@ -107,6 +108,9 @@ function RelatedArtists({ location }) {
 
   return (
     <div>
+      <Link to="/home">
+        <ArrowBackIosRoundedIcon fontSize="large" color="primary" />
+      </Link>
       <Typography
         className={classes.control}
         align="center"
@@ -175,7 +179,11 @@ function RelatedArtists({ location }) {
             justifyContent: 'center',
           }}
         >
-          <NewPlaylist songs={topSongs} artistName={artist.name} />
+          <NewPlaylist
+            handleClose={handleClose}
+            songs={topSongs}
+            artistName={artist.name}
+          />
         </Modal>
       </div>
     </div>

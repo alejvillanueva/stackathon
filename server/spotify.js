@@ -11,7 +11,7 @@ router.post('/create-playlist', async (req, res, next) => {
         },
       })
     ).data;
-    console.log(name, public);
+
     const createPlaylist = (
       await axios.post(
         `https://api.spotify.com/v1/users/${id}/playlists`,
@@ -32,22 +32,19 @@ router.post('/create-playlist', async (req, res, next) => {
     const url = createPlaylist.external_urls.spotify;
     const uris = topSongs.map((song) => song.uri);
 
-    //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
-
-    const addedItems = (
-      await axios.post(
-        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-        {
-          uris,
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        uris,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-    ).data;
-    res.send({ playlistInfor: { uri, url } });
+      }
+    );
+
+    res.send({ uri, url });
   } catch (error) {
     console.log(error);
   }
