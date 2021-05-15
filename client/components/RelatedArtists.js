@@ -52,6 +52,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function getRandomInt(max, min = 0) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
 function RelatedArtists({ location }) {
   const [relatedArtists, setRelatedArtists] = useState([]);
   const [topSongs, setTopSongs] = useState([]);
@@ -91,7 +97,9 @@ function RelatedArtists({ location }) {
             },
           })
         ).data;
-        newTopSongs.push(tracks[0]);
+        const max = tracks.length;
+        const randSong = getRandomInt(max);
+        newTopSongs.push(tracks[randSong]);
       });
       setTopSongs(newTopSongs);
       //const { items } = artists.data;
